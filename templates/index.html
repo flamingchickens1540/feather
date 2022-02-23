@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -8,10 +9,12 @@
 <main>
     <div class="main">
         <h2>Match {{ match }}</h2>
-        <p>{{ match_state }}</p>
+        <p id="state"></p>
         <p>0 shots</p>
 
         <div id="qr"></div>
+
+        <button onclick="send_test()">test</button>
     </div>
 </main>
 
@@ -36,10 +39,18 @@
     }
 </style>
 
-
+<script src="/static/socket.io.min.js"></script>
 <script src="/static/qrcode.min.js"></script>
 
-<script defer>
+<script>
+    let socket = io();
+    socket.on('connect', function () {
+        document.getElementById("state").innerText = "Connected to FEATHER";
+    });
+    socket.on('disconnect', function () {
+        document.getElementById("state").innerText = "Lost FEATHER backend connection";
+    });
+
     let qrcode = new QRCode("qr", {
         width: 256,
         height: 256,

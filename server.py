@@ -2,9 +2,21 @@ import logging
 import sys
 
 from flask import Flask, render_template
+from flask_socketio import SocketIO
 from networktables import NetworkTables
 
+
+class FeatherState:
+    WAITING_FOR_ROBOT = "Waiting for robot"
+    WAITING_FOR_FMS = "Waiting for FMS"
+    WAITING_FOR_MATCH = "Waiting for match"
+    AUTO = "Running auto"
+    TELEOP = "Running teleop"
+    STANDBY = "Standby"
+
+
 app = Flask(__name__)
+socketio = SocketIO(app)
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -15,6 +27,11 @@ nt_server = sys.argv[1]
 
 logging.info("Connecting to " + nt_server)
 NetworkTables.initialize(server=nt_server)
+
+
+@socketio.on('message')
+def handle_message(data):
+    print(data)
 
 
 def nt_change_callback(table, key, value, isNew):
@@ -34,7 +51,7 @@ sd.addEntryListener(nt_change_callback)
 @app.route("/")
 def route_index():
     return render_template("index.html",
-                           match_state="Waiting for robot connection",
+                           match_state=FeatherState.WAITING_FOR_ROBOT,
                            nt_connected=NetworkTables.isConnected(),
                            match=0
                            )
@@ -46,4 +63,4 @@ def route_app():
 
 
 if __name__ == "__main__":
-    app.run()
+    socketio.run(app, debug=True)
