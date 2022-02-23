@@ -1,0 +1,49 @@
+<html lang="en">
+
+<head>
+    <link rel="stylesheet" href="style.css">
+    <title>Feather</title>
+</head>
+
+<main>
+    <div class="main">
+        <h2>Match 0</h2>
+        <p>0 shots</p>
+
+        <div>
+            <button style="color: green">Ok</button>
+            <button style="color: yellow">Bounced</button>
+        </div>
+
+        <div>
+            <button style="color: red">Overshot</button>
+            <button style="color: red">Undershot</button>
+        </div>
+
+        <div>
+            <button>Undo</button>
+            <button>New Match</button>
+        </div>
+    </div>
+</main>
+
+<style>
+    .main {
+        display: flex;
+        border-radius: 5px;
+        padding: 15px;
+        border: 2px solid white;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .main div {
+        display: flex;
+        flex-direction: row;
+    }
+
+    button {
+        margin: 15px;
+        padding: 25px;
+    }
+</style>

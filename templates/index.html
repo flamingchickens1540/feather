@@ -1,0 +1,52 @@
+<html lang="en">
+
+<head>
+    <link rel="stylesheet" href="/static/style.css">
+    <title>Feather</title>
+</head>
+
+<main>
+    <div class="main">
+        <h2>Match {{ match }}</h2>
+        <p>{{ match_state }}</p>
+        <p>0 shots</p>
+
+        <div id="qr"></div>
+    </div>
+</main>
+
+<style>
+    .main {
+        display: flex;
+        border-radius: 5px;
+        padding: 15px;
+        border: 2px solid white;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .main div {
+        display: flex;
+        flex-direction: row;
+    }
+
+    button {
+        margin: 15px;
+        padding: 25px;
+    }
+</style>
+
+
+<script src="/static/qrcode.min.js"></script>
+
+<script defer>
+    let qrcode = new QRCode("qr", {
+        width: 256,
+        height: 256,
+        colorDark: "#fff",
+        colorLight: "#202b38",
+        correctLevel: QRCode.CorrectLevel.H
+    });
+
+    qrcode.makeCode("test qr payload");
+</script>
