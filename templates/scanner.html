@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+
+<style>
+    body {
+        width: 100%;
+        height: 100%;
+        background: rgb(255, 64, 33);
+        background: linear-gradient(90deg, rgba(255, 64, 33, 1) 0%, rgba(255, 254, 22, 1) 100%);
+    }
+
+    #canvas {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        margin: auto;
+        border: 2px solid white;
+        border-radius: 5px;
+    }
+</style>
+
+<body>
+<canvas id="canvas" width="640" height="480"></canvas>
+</body>
+</html>
+
+<script src="/static/jsQR.js"></script>
+
+<script>
+    let video = document.createElement("video");
+    let canvasElement = document.getElementById("canvas");
+    let canvas = canvasElement.getContext("2d");
+    let codeFound = false;
+
+    // Use facingMode: environment to attempt to get the front camera on phones
+    navigator.mediaDevices.getUserMedia({video: {facingMode: "environment"}}).then(function (stream) {
+        video.srcObject = stream;
+        video.setAttribute("playsinline", true); // required to tell iOS safari we don't want fullscreen
+        video.play();
+        requestAnimationFrame(tick);
+    });
+
+    function tick() {
+        if (!codeFound) {
+            if (video.readyState === video.HAVE_ENOUGH_DATA) {
+                canvasElement.height = video.videoHeight;
+                canvasElement.width = video.videoWidth;
+                canvas.drawImage(video, 0, 0, canvasElement.width, canvasElement.height);
+                let imageData = canvas.getImageData(0, 0, canvasElement.width, canvasElement.height);
+                let code = jsQR(imageData.data, imageData.width, imageData.height, {
+                    inversionAttempts: "dontInvert",
+                });
+                if (code) {
+                    codeFound = true
+                    window.location = "/submit?qr=" + code.data
+                }
+            }
+            requestAnimationFrame(tick);
+        }
+    }
+</script>

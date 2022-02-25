@@ -1,5 +1,2 @@
 flask
-flask_socketio
 pynetworktables
-eventlet
-gevent-websocket

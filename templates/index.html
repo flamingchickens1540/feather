@@ -2,27 +2,29 @@
 <html lang="en">
 
 <head>
-    <link rel="stylesheet" href="/static/style.css">
-    <title>Feather</title>
+    <link rel="stylesheet" href="/static/dark.css">
+    <title>Feather DS App</title>
 </head>
 
 <main>
     <div class="main">
-        <h2>Match {{ match }}</h2>
-        <p id="state"></p>
-        <p>0 shots</p>
+        <h2><span id="banner">Waiting for FEATHER connection</span> <span id="timer"></span></h2>
+        <p>Match <span id="matchNumber">UNKNOWN</span> (<span id="alliance">Loading...</span>)</p>
 
-        <div id="qr"></div>
-
-        <button onclick="send_test()">test</button>
+        <button onclick="window.location = '/scanner'">Scanner</button>
     </div>
 </main>
 
 <style>
+    h2 {
+        padding: 0;
+        margin: 0;
+    }
+
     .main {
         display: flex;
         border-radius: 5px;
-        padding: 15px;
+        padding: 30px;
         border: 2px solid white;
         flex-direction: column;
         align-items: center;
@@ -40,24 +42,35 @@
 </style>
 
 <script src="/static/socket.io.min.js"></script>
-<script src="/static/qrcode.min.js"></script>
 
 <script>
-    let socket = io();
-    socket.on('connect', function () {
-        document.getElementById("state").innerText = "Connected to FEATHER";
+    let socket = io.connect();
+    socket.on("connect", function () {
+        document.getElementById("banner").innerText = "Connected to FEATHER"
     });
-    socket.on('disconnect', function () {
-        document.getElementById("state").innerText = "Lost FEATHER backend connection";
-    });
-
-    let qrcode = new QRCode("qr", {
-        width: 256,
-        height: 256,
-        colorDark: "#fff",
-        colorLight: "#202b38",
-        correctLevel: QRCode.CorrectLevel.H
+    socket.on("disconnect", function () {
+        document.getElementById("banner").innerText = "Lost FEATHER backend connection"
     });
 
-    qrcode.makeCode("test qr payload");
+    socket.on("matchState", function (e) {
+        document.getElementById("banner").innerText = e
+        if (e === "Disabled") {
+            document.getElementById("timer").style.display = "none";
+        } else {
+            document.getElementById("timer").style.display = "inline";
+        }
+    });
+    socket.on("matchTimer", function (e) {
+        document.getElementById("timer").innerText = e
+    });
+    socket.on("matchNumber", function (e) {
+        document.getElementById("matchNumber").innerText = e
+    });
+    socket.on("alliance", function (e) {
+        document.getElementById("alliance").innerText = e
+    });
+
+    setInterval(() => {
+        socket.emit("ping")
+    }, 200)
 </script>

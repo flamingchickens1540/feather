@@ -1,38 +1,49 @@
 <html lang="en">
 
 <head>
-    <link rel="stylesheet" href="style.css">
-    <title>Feather</title>
+    <link rel="stylesheet" href="/static/light.css">
+    <title>Feather Mobile App</title>
 </head>
 
 <main>
     <div class="main">
-        <h2>Match 0</h2>
-        <p>0 shots</p>
+        <h2>Match <span id="matchNumber">0</span></h2>
+        <p><span id="count">0</span> shots</p>
 
-        <div>
-            <button style="color: green">Ok</button>
-            <button style="color: yellow">Bounced</button>
+        <div id="qr" style="display: none"></div>
+
+        <div id="matchButtons">
+            <div>
+                <button style="color: green" onclick="logShot('ok')">Ok</button>
+                <button style="color: yellow" onclick="logShot('bounced')">Bounced</button>
+            </div>
+
+            <div>
+                <button style="color: red" onclick="logShot('over')">Overshot</button>
+                <button style="color: red" onclick="logShot('under')">Undershot</button>
+            </div>
+
+            <div>
+                <button onclick="undo()">Undo</button>
+                <button onclick="clearShots()">Clear</button>
+            </div>
         </div>
 
         <div>
-            <button style="color: red">Overshot</button>
-            <button style="color: red">Undershot</button>
-        </div>
-
-        <div>
-            <button>Undo</button>
-            <button>New Match</button>
+            <button onclick="toggleQR()">QR</button>
         </div>
     </div>
 </main>
 
 <style>
     .main {
+        border: 2px solid white;
+    }
+
+    .main, #matchButtons {
         display: flex;
         border-radius: 5px;
         padding: 15px;
-        border: 2px solid white;
         flex-direction: column;
         align-items: center;
     }
@@ -47,3 +58,58 @@
         padding: 25px;
     }
 </style>
+
+<script src="/static/qrcode.min.js"></script>
+
+<script>
+    let shots = []
+    let qrcode = new QRCode("qr", {
+        width: 512,
+        height: 512,
+        colorDark: "#000",
+        colorLight: "#fff",
+        correctLevel: QRCode.CorrectLevel.L
+    })
+
+    function toggleQR() {
+        if (document.getElementById("qr").style.display === "none") { // If QR isn't showing, show it
+            let shotsObj = {}
+            for (let i in shots) {
+                shotsObj[shots[i]["time"]] = shots[i]["result"];
+            }
+            qrcode.makeCode(btoa(JSON.stringify({
+                matchNumber: document.getElementById("matchNumber").innerText,
+                shots: shotsObj
+            })));
+            document.getElementById("qr").style.display = "block"
+            document.getElementById("matchButtons").style.display = "none"
+        } else {
+            document.getElementById("qr").style.display = "none"
+            document.getElementById("matchButtons").style.display = "flex"
+        }
+    }
+
+    function updateCount() {
+        document.getElementById("count").innerText = shots.length
+    }
+
+    function logShot(shotResult) {
+        shots.push({
+            time: Date.now(),
+            result: shotResult
+        })
+        updateCount()
+    }
+
+    function clearShots() {
+        if (confirm("Are you sure you want to clear this match?")) {
+            shots = []
+            updateCount()
+        }
+    }
+
+    function undo() {
+        shots.pop()
+        updateCount()
+    }
+</script>

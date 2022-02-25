@@ -1,19 +1,11 @@
+import base64
+import json
+import datetime
 import logging
 import sys
-
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 from flask_socketio import SocketIO
 from networktables import NetworkTables
-
-
-class FeatherState:
-    WAITING_FOR_ROBOT = "Waiting for robot"
-    WAITING_FOR_FMS = "Waiting for FMS"
-    WAITING_FOR_MATCH = "Waiting for match"
-    AUTO = "Running auto"
-    TELEOP = "Running teleop"
-    STANDBY = "Standby"
-
 
 app = Flask(__name__)
 socketio = SocketIO(app)
@@ -29,32 +21,28 @@ logging.info("Connecting to " + nt_server)
 NetworkTables.initialize(server=nt_server)
 
 
-@socketio.on('message')
+@socketio.on("message")
 def handle_message(data):
-    print(data)
+    logging.info(data)
 
 
-def nt_change_callback(table, key, value, isNew):
-    print(f"nt change table: {table} key {key} value {value} new {isNew}")
+feather = NetworkTables.getTable("SmartDashboard/feather")
+fms = NetworkTables.getTable("FMSInfo")
 
 
-def nt_connection_callback(connected, info):
-    print(info, "; Connected=%s" % connected)
+@socketio.on("ping")
+def pong():
+    socketio.emit("matchState", feather.getString("matchState", "disabled").title())
+    socketio.emit("matchTimer", str(datetime.timedelta(seconds=round(feather.getNumber("matchTimer", 0)))))
+    socketio.emit("matchNumber", fms.getString("MatchNumber", "UNKNOWN"))
 
-
-NetworkTables.addConnectionListener(nt_connection_callback, immediateNotify=True)
-
-sd = NetworkTables.getTable("SmartDashboard")
-sd.addEntryListener(nt_change_callback)
+    alliance_string = "Red" if fms.getBoolean("IsRedAlliance", False) else "Blue"
+    socketio.emit("alliance", f"{alliance_string} {round(fms.getNumber('StationNumber', 0))}")
 
 
 @app.route("/")
 def route_index():
-    return render_template("index.html",
-                           match_state=FeatherState.WAITING_FOR_ROBOT,
-                           nt_connected=NetworkTables.isConnected(),
-                           match=0
-                           )
+    return render_template("index.html")
 
 
 @app.route("/app")
@@ -62,5 +50,17 @@ def route_app():
     return render_template("app.html")
 
 
+@app.route("/scanner")
+def route_scanner():
+    return render_template("scanner.html")
+
+
+@app.route("/submit")
+def route_submit():
+    qr_data = json.loads(base64.b64decode(request.args.get("qr")).decode())
+    print(qr_data)
+    return render_template("import.html", match_number=qr_data["matchNumber"], shots=len(qr_data["shots"]))
+
+
 if __name__ == "__main__":
-    socketio.run(app, debug=True)
+    socketio.run(app, host="0.0.0.0", port=5000, debug=True)
