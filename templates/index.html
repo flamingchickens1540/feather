@@ -9,7 +9,12 @@
 <main>
     <div class="main">
         <h2><span id="banner">Waiting for FEATHER connection</span> <span id="timer"></span></h2>
-        <p>Match <span id="matchNumber">UNKNOWN</span> (<span id="alliance">Loading...</span>)</p>
+        <div class="flex-row">
+            <p>Match</p>
+            <input type="text" id="matchNumber" value="2022">
+        </div>
+
+        <p id="alliance">Loading...</p>
 
         <button onclick="window.location = '/scanner'">Scanner</button>
     </div>
@@ -30,14 +35,30 @@
         align-items: center;
     }
 
-    .main div {
-        display: flex;
-        flex-direction: row;
+    button {
+        padding: 15px;
     }
 
-    button {
-        margin: 15px;
-        padding: 25px;
+    input[type="text"] {
+        width: 4ch;
+        margin-right: 0;
+        margin-bottom: 0;
+    }
+
+    .flex-row {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+    }
+
+    .flex-row p {
+        margin-right: 10px;
+        font-size: 20px;
+    }
+
+    #alliance {
+        padding: 0;
+        margin-top: 0;
     }
 </style>
 
@@ -54,17 +75,17 @@
 
     socket.on("matchState", function (e) {
         document.getElementById("banner").innerText = e
-        if (e === "Disabled") {
-            document.getElementById("timer").style.display = "none";
-        } else {
+        if (e === "Teleop" || e === "Auto") {
             document.getElementById("timer").style.display = "inline";
+        } else {
+            document.getElementById("timer").style.display = "none";
         }
     });
     socket.on("matchTimer", function (e) {
         document.getElementById("timer").innerText = e
     });
     socket.on("matchNumber", function (e) {
-        document.getElementById("matchNumber").innerText = e
+        document.getElementById("matchNumber").value = e
     });
     socket.on("alliance", function (e) {
         document.getElementById("alliance").innerText = e
