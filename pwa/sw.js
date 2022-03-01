@@ -1,16 +1,17 @@
+let statics = [
+    "/",
+    "/app.js",
+    "/qrcode.min.js",
+    "/sw.js",
+    "/index.html",
+    "/icon.png",
+    "/hub.png"
+]
+
 self.addEventListener("install", function (event) {
     event.waitUntil(
         caches.open("feather-v1").then(function (cache) {
-            return cache.addAll(
-                [
-                    "/",
-                    "/index.html",
-                    "/light.css",
-                    "/style.css",
-                    "/qrcode.min.js",
-                    "/app.js",
-                ]
-            );
+            return cache.addAll(statics);
         })
     );
 });

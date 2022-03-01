@@ -9,44 +9,121 @@
 
     <title>Feather Mobile App</title>
 
-    <link rel="stylesheet" href="light.css">
-    <link rel="stylesheet" href="style.css">
     <link rel="manifest" href="manifest.json">
     <link rel="icon" href="icon.png">
     <link rel="apple-touch-icon" href="icon.png">
+
+    <style>
+        html, body {
+            margin: 0;
+            height: 100%;
+            overflow: hidden;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', 'Segoe UI Emoji', 'Apple Color Emoji', 'Noto Color Emoji', sans-serif;
+            background: #1c1c1e;
+            color: white;
+        }
+
+        body, #match-buttons {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        #match-buttons {
+            background-image: url("hub.png");
+            background-repeat: no-repeat;
+            background-position: center;
+            width: 100%;
+        }
+
+        body {
+            margin-top: 35px;
+        }
+
+        button {
+            margin: 15px;
+            padding: 25px;
+            touch-action: manipulation; /* Disable double tap zoom */
+            color: white;
+            background: #1c1c1e;
+            border: 1px solid white;
+            font-family: inherit;
+            font-size: inherit;
+            border-radius: 6px;
+            outline: none;
+        }
+
+        input[type="number"] {
+            color: #1d1d1d;
+            background-color: #efefef;
+            font-family: inherit;
+            font-size: inherit;
+            margin-right: 6px;
+            margin-bottom: 6px;
+            padding: 10px;
+            border: none;
+            border-radius: 6px;
+            outline: none;
+        }
+
+        .flex-row {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .flex-row input {
+            width: 8ch;
+            padding: 8px;
+            margin: 0;
+        }
+
+        .flex-row h2 {
+            padding: 0;
+            margin: 0 10px 0 0;
+        }
+
+        .qr-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        #qr img {
+            width: 90%;
+            margin: 0 auto;
+        }
+    </style>
 </head>
 
 <body>
-    <div class="main">
-        <div class="flex-row">
-            <h2>Match</h2>
-            <input id="matchNumber" type="number" value="1234">
-        </div>
-        <p><span id="count">0</span> shots</p>
+<div class="flex-row">
+    <h2>Match</h2>
+    <input id="matchNumber" type="number" value="1234">
+</div>
+<p style="margin-top: 25px"><span id="count">0</span> shots</p>
 
-        <div id="qr" style="display: none"></div>
+<div class="qr-container">
+    <div id="qr" style="display: none"></div>
+</div>
 
-        <div id="matchButtons">
-            <div>
-                <button style="color: green" onclick="logShot('ok')">Ok</button>
-                <button style="color: yellow" onclick="logShot('bounced')">Bounce</button>
-            </div>
+<div id="match-buttons">
+    <button style="color: red" onclick="logShot('over')">Over</button>
 
-            <div>
-                <button style="color: red" onclick="logShot('over')">Over</button>
-                <button style="color: red" onclick="logShot('under')">Under</button>
-            </div>
-
-            <div>
-                <button onclick="undo()">Undo</button>
-                <button onclick="clearShots()">Clear</button>
-            </div>
-        </div>
-
-        <div>
-            <button onclick="toggleQR()" id="qr-button">QR</button>
-        </div>
+    <div>
+        <button style="color: green" onclick="logShot('ok')">Ok</button>
+        <button style="color: yellow" onclick="logShot('bounced')">Bounce</button>
     </div>
+    <button style="color: red" onclick="logShot('under')">Under</button>
+</div>
+
+<div>
+    <button onclick="undo()">Undo</button>
+    <button onclick="clearShots()">Clear</button>
+    <button onclick="toggleQR()" id="qr-button">QR</button>
+</div>
+
 </body>
 
 <script src="qrcode.min.js"></script>

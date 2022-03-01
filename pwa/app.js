@@ -3,8 +3,8 @@ let shots = []
 let qrcode = new QRCode("qr", {
     width: 512,
     height: 512,
-    colorDark: "#000",
-    colorLight: "#fff",
+    colorDark: "#fff",
+    colorLight: "#1C1C1E",
     correctLevel: QRCode.CorrectLevel.L
 })
 
@@ -22,11 +22,11 @@ function toggleQR() {
         qrcode.makeCode(btoa(jsonBody));
         console.log(jsonBody)
         document.getElementById("qr").style.display = "block"
-        document.getElementById("matchButtons").style.display = "none"
+        document.getElementById("match-buttons").style.display = "none"
     } else { // If QR is showing
         document.getElementById("qr-button").innerText = "QR"
         document.getElementById("qr").style.display = "none"
-        document.getElementById("matchButtons").style.display = "flex"
+        document.getElementById("match-buttons").style.display = "flex"
     }
 }
 
