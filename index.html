@@ -1,0 +1,130 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="theme-color" content="#FF1616"/>
+    <meta name="apple-mobile-web-app-status-bar" content="#FF1616">
+
+    <title>Feather</title>
+
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" href="icon.png">
+    <link rel="apple-touch-icon" href="icon.png">
+
+    <style>
+        html, body {
+            margin: 0;
+            height: 100%;
+            overflow: hidden;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', 'Segoe UI Emoji', 'Apple Color Emoji', 'Noto Color Emoji', sans-serif;
+            background: #1c1c1e;
+            color: white;
+        }
+
+        body, #hub {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        #hub {
+            background-image: url("hub.png");
+            background-repeat: no-repeat;
+            background-position: center;
+            width: 100%;
+        }
+
+        body {
+            margin-top: 35px;
+        }
+
+        button {
+            margin: 15px;
+            padding: 25px;
+            touch-action: manipulation; /* Disable double tap zoom */
+            color: white;
+            background: #1c1c1e;
+            border: 1px solid white;
+            font-family: inherit;
+            font-size: inherit;
+            border-radius: 6px;
+            outline: none;
+        }
+
+        input[type="text"] {
+            color: #1d1d1d;
+            background-color: #efefef;
+            font-family: inherit;
+            font-size: inherit;
+            margin-right: 6px;
+            margin-bottom: 6px;
+            padding: 10px;
+            border: none;
+            border-radius: 6px;
+            outline: none;
+        }
+
+        .flex-row {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .flex-row input {
+            width: 6ch;
+            padding: 8px;
+            margin: 0;
+        }
+
+        .flex-row h2 {
+            padding: 0;
+            margin: 0 10px 0 0;
+        }
+
+        .qr-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        #qr img {
+            width: 90%;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+
+<body>
+<div class="flex-row">
+    <h2>Match</h2>
+    <input id="matchNumber" type="text" value="0000">
+</div>
+<p style="margin-top: 25px"><span id="count">0</span> shots</p>
+
+<div class="qr-container">
+    <div id="qr" style="display: none"></div>
+</div>
+
+<div id="hub">
+    <button class="match-button" style="color: red" onclick="logShot('over')">Over</button>
+
+    <div>
+        <button class="match-button" style="color: green" onclick="logShot('ok')">Ok</button>
+        <button class="match-button" style="color: yellow" onclick="logShot('bounced')">Bounce</button>
+    </div>
+    <button class="match-button" style="color: red" onclick="logShot('under')">Under</button>
+</div>
+
+<div>
+    <button class="match-button" onclick="undo()">Undo</button>
+    <button class="match-button" onclick="clearShots()">Clear</button>
+    <button onclick="toggleQR()" id="qr-button">QR</button>
+</div>
+
+</body>
+
+<script src="qrcode.min.js"></script>
+<script src="app.js"></script>
