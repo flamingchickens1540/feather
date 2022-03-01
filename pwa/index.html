@@ -1,53 +1,22 @@
 <html lang="en">
 
 <head>
-    <link rel="stylesheet" href="/static/light.css">
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="theme-color" content="#FF1616"/>
+    <meta name="apple-mobile-web-app-status-bar" content="#FF1616">
+
     <title>Feather Mobile App</title>
 
-    <style>
-        html, body {
-            margin: 0;
-            height: 100%;
-            overflow: hidden
-        }
-
-        .main {
-            border: 2px solid white;
-        }
-
-        .main, #matchButtons {
-            display: flex;
-            border-radius: 5px;
-            padding: 15px;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        button {
-            margin: 15px;
-            padding: 25px;
-        }
-
-        .flex-row {
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .flex-row input {
-            width: 8ch;
-        }
-
-        .flex-row h2 {
-            padding: 0;
-            margin: 0 10px 0 0;
-        }
-    </style>
+    <link rel="stylesheet" href="light.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" href="icon.png">
+    <link rel="apple-touch-icon" href="icon.png">
 </head>
 
-<main>
+<body>
     <div class="main">
         <div class="flex-row">
             <h2>Match</h2>
@@ -60,12 +29,12 @@
         <div id="matchButtons">
             <div>
                 <button style="color: green" onclick="logShot('ok')">Ok</button>
-                <button style="color: yellow" onclick="logShot('bounced')">Bounced</button>
+                <button style="color: yellow" onclick="logShot('bounced')">Bounce</button>
             </div>
 
             <div>
-                <button style="color: red" onclick="logShot('over')">Overshot</button>
-                <button style="color: red" onclick="logShot('under')">Undershot</button>
+                <button style="color: red" onclick="logShot('over')">Over</button>
+                <button style="color: red" onclick="logShot('under')">Under</button>
             </div>
 
             <div>
@@ -78,63 +47,7 @@
             <button onclick="toggleQR()" id="qr-button">QR</button>
         </div>
     </div>
-</main>
+</body>
 
-<script src="/static/qrcode.min.js"></script>
-
-<script>
-    let shots = []
-    let qrcode = new QRCode("qr", {
-        width: 512,
-        height: 512,
-        colorDark: "#000",
-        colorLight: "#fff",
-        correctLevel: QRCode.CorrectLevel.L
-    })
-
-    function toggleQR() {
-        if (document.getElementById("qr").style.display === "none") { // If QR isn't showing, show it
-            document.getElementById("qr-button").innerText = "Back"
-            let shotsObj = {}
-            for (let i in shots) {
-                shotsObj[shots[i]["time"]] = shots[i]["result"];
-            }
-            jsonBody = JSON.stringify({
-                matchNumber: document.getElementById("matchNumber").value,
-                shots: shotsObj
-            })
-            qrcode.makeCode(btoa(jsonBody));
-            console.log(jsonBody)
-            document.getElementById("qr").style.display = "block"
-            document.getElementById("matchButtons").style.display = "none"
-        } else { // If QR is showing
-            document.getElementById("qr-button").innerText = "QR"
-            document.getElementById("qr").style.display = "none"
-            document.getElementById("matchButtons").style.display = "flex"
-        }
-    }
-
-    function updateCount() {
-        document.getElementById("count").innerText = shots.length
-    }
-
-    function logShot(shotResult) {
-        shots.push({
-            time: Date.now(),
-            result: shotResult
-        })
-        updateCount()
-    }
-
-    function clearShots() {
-        if (confirm("Are you sure you want to clear this match?")) {
-            shots = []
-            updateCount()
-        }
-    }
-
-    function undo() {
-        shots.pop()
-        updateCount()
-    }
-</script>
+<script src="qrcode.min.js"></script>
+<script src="app.js"></script>
