@@ -22,11 +22,15 @@ function toggleQR() {
         qrcode.makeCode(btoa(jsonBody));
         console.log(jsonBody)
         document.getElementById("qr").style.display = "block"
-        document.getElementById("match-buttons").style.display = "none"
+        for (let e in document.getElementsByClassName("match-button")) {
+            document.getElementsByClassName("match-button")[e].style.display = "none"
+        }
     } else { // If QR is showing
         document.getElementById("qr-button").innerText = "QR"
         document.getElementById("qr").style.display = "none"
-        document.getElementById("match-buttons").style.display = "flex"
+        for (let e in document.getElementsByClassName("match-button")) {
+            document.getElementsByClassName("match-button")[e].style.display = "inline"
+        }
     }
 }
 

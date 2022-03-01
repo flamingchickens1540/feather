@@ -23,13 +23,13 @@
             color: white;
         }
 
-        body, #match-buttons {
+        body, #hub {
             display: flex;
             flex-direction: column;
             align-items: center;
         }
 
-        #match-buttons {
+        #hub {
             background-image: url("hub.png");
             background-repeat: no-repeat;
             background-position: center;
@@ -108,19 +108,19 @@
     <div id="qr" style="display: none"></div>
 </div>
 
-<div id="match-buttons">
-    <button style="color: red" onclick="logShot('over')">Over</button>
+<div id="hub">
+    <button class="match-button" style="color: red" onclick="logShot('over')">Over</button>
 
     <div>
-        <button style="color: green" onclick="logShot('ok')">Ok</button>
-        <button style="color: yellow" onclick="logShot('bounced')">Bounce</button>
+        <button class="match-button" style="color: green" onclick="logShot('ok')">Ok</button>
+        <button class="match-button" style="color: yellow" onclick="logShot('bounced')">Bounce</button>
     </div>
-    <button style="color: red" onclick="logShot('under')">Under</button>
+    <button class="match-button" style="color: red" onclick="logShot('under')">Under</button>
 </div>
 
 <div>
-    <button onclick="undo()">Undo</button>
-    <button onclick="clearShots()">Clear</button>
+    <button class="match-button" onclick="undo()">Undo</button>
+    <button class="match-button" onclick="clearShots()">Clear</button>
     <button onclick="toggleQR()" id="qr-button">QR</button>
 </div>
 
