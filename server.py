@@ -27,34 +27,26 @@ NetworkTables.initialize(server=nt_server)
 
 def nt_change_callback(table, key, value, isNew):
     # print(f"nt change table: {table} key {key} value {value} new {isNew}")
-    if key == "shotTaken":
-        print("Shot taken!")
-        # TODO: Add document
+    if key == "matchTime" and value is True:
+        shot = {
+            "matchTime": feather.getNumber("matchTime", -1),
+            "matchId": feather.getString("matchId", "unknown-match"),
+            "limelightDistance": feather.getNumber("limelightDistance", -1),
+            "lidarDistance": feather.getNumber("lidarDistance", -1),
+            "frontRPM": feather.getNumber("frontRPM", -1),
+            "rearRPM": feather.getNumber("rearRPM", -1),
+            "hoodUp": feather.getBoolean("hoodUp", False)
+        }
+        db["shots"].insert_one(shot)
 
 
 fms = NetworkTables.getTable("FMSInfo")
 feather = NetworkTables.getTable("SmartDashboard/feather")
 feather.addEntryListener(nt_change_callback)
 
-time.sleep(0.5)  # Wait for NetworkTables
-if not NetworkTables.isConnected():
-    logging.error("Unable to connect to NetworkTables server " + nt_server)
-    exit(1)
-
-
-@socketio.on("message")
-def handle_message(data):
-    logging.info(data)
-
-
-@socketio.on("ping")
-def pong():
-    socketio.emit("matchState", feather.getString("matchState", "disabled").title())
-    socketio.emit("matchTimer", str(datetime.timedelta(seconds=round(feather.getNumber("matchTimer", 0)))))
-    socketio.emit("matchNumber", fms.getString("MatchNumber", 0))
-
-    alliance_string = "Red" if fms.getBoolean("IsRedAlliance", False) else "Blue"
-    socketio.emit("alliance", f"{alliance_string} {round(fms.getNumber('StationNumber', 0))}")
+while not NetworkTables.isConnected():
+    logging.error("Waiting for NetworkTables server " + nt_server)
+    time.sleep(2)
 
 
 @app.route("/")

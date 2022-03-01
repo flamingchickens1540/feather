@@ -2,12 +2,57 @@
 
 <head>
     <link rel="stylesheet" href="/static/light.css">
+    <meta charset="UTF-8">
     <title>Feather Mobile App</title>
+
+    <style>
+        html, body {
+            margin: 0;
+            height: 100%;
+            overflow: hidden
+        }
+
+        .main {
+            border: 2px solid white;
+        }
+
+        .main, #matchButtons {
+            display: flex;
+            border-radius: 5px;
+            padding: 15px;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        button {
+            margin: 15px;
+            padding: 25px;
+        }
+
+        .flex-row {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .flex-row input {
+            width: 8ch;
+        }
+
+        .flex-row h2 {
+            padding: 0;
+            margin: 0 10px 0 0;
+        }
+    </style>
 </head>
 
 <main>
     <div class="main">
-        <h2>Match <span id="matchNumber">0</span></h2>
+        <div class="flex-row">
+            <h2>Match</h2>
+            <input id="matchNumber" type="number" value="1234">
+        </div>
         <p><span id="count">0</span> shots</p>
 
         <div id="qr" style="display: none"></div>
@@ -30,34 +75,10 @@
         </div>
 
         <div>
-            <button onclick="toggleQR()">QR</button>
+            <button onclick="toggleQR()" id="qr-button">QR</button>
         </div>
     </div>
 </main>
-
-<style>
-    .main {
-        border: 2px solid white;
-    }
-
-    .main, #matchButtons {
-        display: flex;
-        border-radius: 5px;
-        padding: 15px;
-        flex-direction: column;
-        align-items: center;
-    }
-
-    .main div {
-        display: flex;
-        flex-direction: row;
-    }
-
-    button {
-        margin: 15px;
-        padding: 25px;
-    }
-</style>
 
 <script src="/static/qrcode.min.js"></script>
 
@@ -73,17 +94,21 @@
 
     function toggleQR() {
         if (document.getElementById("qr").style.display === "none") { // If QR isn't showing, show it
+            document.getElementById("qr-button").innerText = "Back"
             let shotsObj = {}
             for (let i in shots) {
                 shotsObj[shots[i]["time"]] = shots[i]["result"];
             }
-            qrcode.makeCode(btoa(JSON.stringify({
-                matchNumber: document.getElementById("matchNumber").innerText,
+            jsonBody = JSON.stringify({
+                matchNumber: document.getElementById("matchNumber").value,
                 shots: shotsObj
-            })));
+            })
+            qrcode.makeCode(btoa(jsonBody));
+            console.log(jsonBody)
             document.getElementById("qr").style.display = "block"
             document.getElementById("matchButtons").style.display = "none"
-        } else {
+        } else { // If QR is showing
+            document.getElementById("qr-button").innerText = "QR"
             document.getElementById("qr").style.display = "none"
             document.getElementById("matchButtons").style.display = "flex"
         }
